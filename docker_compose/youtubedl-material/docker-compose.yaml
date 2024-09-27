@@ -1,0 +1,38 @@
+---
+services:
+  ytdl:
+    container_name: ytdl
+    environment: 
+      ALLOW_CONFIG_MUTATIONS: 'true'
+      ytdl_use_local_db: 'true'
+      write_ytdl_config: 'true'
+    restart: unless-stopped
+    volumes:
+      - config:/app/appdata
+      - /mnt/external/downloads/music:/app/audio
+      - /mnt/external/downloads/video:/app/video
+      - /mnt/external/downloads/subscriptions:/app/subscriptions
+      - users:/app/users
+    image: tzahi12345/youtubedl-material:nightly
+    networks:
+      - swag_network
+    healthcheck: 
+      test: "curl --fail http://localhost:17442"
+    labels:
+      - homepage.group=Downloads/File Transfer
+      - homepage.name=YouTube-DL
+      - homepage.icon=youtube.png
+      - homepage.href=url
+      - homepage.description=Video/Audio Downloader
+
+volumes:
+  config:
+    external: false
+  users:
+    external: false
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...
