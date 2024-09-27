@@ -1,0 +1,16 @@
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil expand-links:t f:t
+#+options: inline:t num:t p:nil pri:nil prop:nil stat:t tags:t
+#+options: tasks:t tex:t timestamp:t title:t toc:t todo:t |:t
+#+title: My SWAG Setup
+#+date: <2024-09-26 Thu>
+#+author: Thomas Freeman
+#+email: 
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 28.2 (Org mode 9.8-pre)
+#+cite_export:
+
+This repository contains the configuration files and docker-compose files for my Raspberry Pi 4 Secure Web Access Gateway (SWAG) setup.
