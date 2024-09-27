@@ -1,0 +1,30 @@
+---
+services:
+  freshrss:
+    image: lscr.io/linuxserver/freshrss:1.24.3
+    container_name: freshrss
+    env_file:
+      - stack.env
+    volumes:
+      - /srv/docker/freshrss/:/config
+    restart: unless-stopped
+    healthcheck:
+      test: "curl --fail http://localhost"
+    networks:
+      - swag_network
+    labels:
+      - homepage.group=Frequently Used
+      - homepage.name=FreshRSS
+      - homepage.icon=freshrss.png
+      - homepage.href=url
+      - homepage.description=News feed aggregator
+      - homepage.widget.type=freshrss
+      - homepage.widget.url=http://freshrss:80
+      - homepage.widget.username=user
+      - homepage.widget.password=password
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...
