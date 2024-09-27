@@ -1,0 +1,32 @@
+---
+services:
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    env_file:
+      - stack.env
+    volumes:
+      - /srv/docker/qbittorrent/appdata:/config
+      - /mnt/external/downloads:/downloads
+    ports:
+      - 6881:6881
+      - 6881:6881/udp
+    restart: unless-stopped
+    networks:
+      - swag_network
+    labels:
+      - homepage.group=Downloads/File Transfer
+      - homepage.name=qbittorrent
+      - homepage.icon=qbittorrent.png
+      - homepage.href=url
+      - homepage.description=Torrent Downloader
+      - homepage.widget.type=qbittorrent
+      - homepage.widget.url=http://qbittorrent:8080
+      - homepage.widget.username=qbit
+      - homepage.widget.password=qbitadmin
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...
