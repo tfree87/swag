@@ -1,0 +1,29 @@
+---
+services:
+  pyload-ng:
+    image: lscr.io/linuxserver/pyload-ng:latest
+    container_name: pyload
+    env_file:
+      - stack.env
+    volumes:
+      - /srv/docker/pyload:/config
+      - /mnt/external/downloads:/downloads
+    restart: unless-stopped
+    networks:
+      - swag_network
+    labels:
+      - homepage.group=Downloads/File Transfer
+      - homepage.name=Pyload
+      - homepage.icon=pyload.png
+      - homepage.href=url
+      - homepage.description=File Download Manager
+      - homepage.widget.type=pyload
+      - homepage.widget.url=http://pyload:8000
+      - homepage.widget.username=pyload
+      - homepage.widget.password=pyload
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...
