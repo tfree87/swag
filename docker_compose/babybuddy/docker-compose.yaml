@@ -1,0 +1,27 @@
+---
+services:
+  babybuddy:
+    container_name: babybuddy
+    hostname: raspberrypi.babybuddy
+    image: lscr.io/linuxserver/babybuddy:latest
+    restart: unless-stopped
+    env_file:
+      - stack.env
+    volumes:
+      - /srv/docker/babybuddy:/config
+    networks:
+      - swag_network
+    healthcheck:
+      test: "curl --fail http://localhost"
+    labels:
+      - homepage.group=Home
+      - homepage.name=BabyBuddy
+      - homepage.icon=babybuddy.png
+      - homepage.href=url
+      - homepage.description=Baby Data Tracking
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...

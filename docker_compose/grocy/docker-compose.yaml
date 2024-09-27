@@ -1,0 +1,27 @@
+---
+services:
+  grocy:
+    container_name: grocy
+    hostname: raspberrypi.grocy
+    image: lscr.io/linuxserver/grocy:latest
+    restart: unless-stopped
+    env_file:
+      - stack.env
+    volumes:
+      - "/srv/docker/grocy:/config"
+    networks:
+      - swag_network
+    healthcheck:
+      test: "curl --fail http://localhost"
+    labels:
+      - homepage.group=Home
+      - homepage.name=Grocy
+      - homepage.icon=grocy.png
+      - homepage.href=url
+      - homepage.description=Home Inventory
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...

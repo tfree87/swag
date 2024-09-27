@@ -1,0 +1,31 @@
+---
+services:
+  calibre-web:
+    container_name: calibre-web
+    image: linuxserver/calibre-web:latest
+    restart: unless-stopped
+    env_file:
+      - stack.env
+    volumes:
+      - "/srv/docker/calibre_web:/config"
+      - "/mnt/external/media/Library/Books:/books"
+    networks:
+      - swag_network
+    healthcheck:
+      test: "curl --fail http://localhost:8083"
+    labels:
+      - homepage.group=Media
+      - homepage.name=Calibre Web
+      - homepage.icon=calibre-web.png
+      - homepage.href=url
+      - homepage.description=Ebook Library
+      - homepage.widget.type=calibreweb
+      - homepage.widget.url=http://calibre-web:8083
+      - homepage.widget.username=username
+      - homepage.widget.password=password
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...

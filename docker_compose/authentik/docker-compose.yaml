@@ -1,0 +1,87 @@
+---
+services:
+  postgresql:
+    image: docker.io/library/postgres:16-alpine
+    container_name: authentik_postgresql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 5s
+    volumes:
+      - database:/var/lib/postgresql/data
+    env_file:
+      - stack.env
+    networks:
+      - swag_network
+
+  redis:
+    image: docker.io/library/redis:alpine
+    container_name: authentik_redis
+    command: --save 60 1 --loglevel warning
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 3s
+    volumes:
+      - redis:/data
+    networks:
+      - swag_network
+
+  authentik:
+    image: ghcr.io/goauthentik/server:2024.6.2
+    container_name: authentik-server
+    restart: unless-stopped
+    command: server
+    volumes:
+      - /srv/docker/authentik/media:/media
+      - /srv/docker/authentik/custom-templates:/templates
+    env_file:
+      - stack.env
+    depends_on:
+      - postgresql
+      - redis
+    networks:
+      - swag_network
+    labels:
+      - homepage.group=GroupName
+      - homepage.name=Authentik
+      - homepage.icon=authentik.png
+      - homepage.href=url
+      - homepage.description=Authentication System
+
+  worker:
+    image: ghcr.io/goauthentik/server:2024.6.2
+    container_name: authentik-worker
+    restart: unless-stopped
+    command: worker
+    user: root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /srv/docker/authentik/media:/media
+      - /srv/docker/authentik/certs:/certs
+      - /srv/docker/authentik/custom-templates:/templates
+    env_file:
+      - stack.env
+    depends_on:
+      - postgresql
+      - redis
+    networks:
+      - swag_network
+
+volumes:
+  database:
+    driver: local
+  redis:
+    driver: local
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...

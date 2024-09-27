@@ -1,0 +1,29 @@
+---
+services:
+  boinc:
+    image: lscr.io/linuxserver/boinc:latest
+    container_name: boinc
+    security_opt:
+      - seccomp:unconfined
+    env_file:
+      - stack.env
+    volumes:
+      - config:/config
+    ports:
+      - 8181:8181
+    devices:
+      - /dev/dri:/dev/dri
+    restart: unless-stopped
+    healthcheck:
+      test: "curl -k -u ${CUSTOM_USER}:${PASSWORD} --fail https://localhost:8181"
+    labels:
+      - homepage.group=Server
+      - homepage.name=BOINC
+      - homepage.icon=boinc.png
+      - homepage.href=url
+      - homepage.description=Compute for Science
+
+volumes:
+  config:
+    external: false
+...

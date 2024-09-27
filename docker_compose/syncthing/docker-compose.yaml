@@ -1,0 +1,31 @@
+---
+services:
+  syncthing:
+    image: lscr.io/linuxserver/syncthing:latest
+    container_name: syncthing
+    env_file:
+      - stack.env
+    volumes:
+      - /srv/docker/syncthing/config:/config
+    ports:
+      - 8384:8384
+      - 22000:22000/tcp
+      - 22000:22000/udp
+      - 21027:21027/udp
+    restart: unless-stopped
+    networks:
+      - swag_network
+    healthcheck:
+      test: "curl --fail http://localhost:8384"
+    labels:
+      - homepage.group=Tools
+      - homepage.name=Syncthing
+      - homepage.icon=syncthing.png
+      - homepage.href=url
+      - homepage.description=Remote File Synchronizer
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...

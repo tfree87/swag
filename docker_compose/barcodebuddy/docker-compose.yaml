@@ -1,0 +1,30 @@
+---
+services:
+  barcodebuddy:
+    container_name: barcodebuddy
+    image: f0rc3/barcodebuddy:latest
+    restart: unless-stopped
+    env_file:
+      - stack.env
+    ports:
+      - 8081:80
+    volumes:
+      - "/srv/docker/barcodebuddy:/config"  
+    devices:
+      - "/dev/input/event0:/dev/input/event0"
+    networks:
+      - swag_network
+    healthcheck:
+      test: "curl --fail http://localhost"
+    labels:
+      - homepage.group=Tools
+      - homepage.name=Barcode Buddy
+      - homepage.icon=barcodebuddy.png
+      - homepage.href=url
+      - homepage.description=Barcode Scanner for Grocy
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...

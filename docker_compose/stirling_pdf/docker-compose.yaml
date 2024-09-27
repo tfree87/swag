@@ -1,0 +1,26 @@
+---
+services:
+  stirling-pdf:
+    image: frooodle/s-pdf:latest
+    container_name: stirling-pdf
+    restart: unless-stopped
+    volumes:
+      - /srv/docker/stirling_pdf:/configs
+    env_file:
+      - stack.env
+    networks:
+      - swag_network
+    healthcheck:
+      test: "curl --fail http://localhost:8080"
+    labels:
+      - homepage.group=Tools
+      - homepage.name=Stirling-PDF
+      - homepage.icon=stirling-pdf.png
+      - homepage.href=url
+      - homepage.description=PDF Tools
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...

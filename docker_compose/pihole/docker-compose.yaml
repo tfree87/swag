@@ -1,0 +1,37 @@
+---
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    hostname: pi.hole
+    restart: unless-stopped
+    env_file:
+      - stack.env
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "7080:80/tcp"
+    volumes:
+      - "/etc/pihole/:/etc/pihole/"
+      - "/etc/dnsmasq.d/:/etc/dnsmasq.d/"
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - swag_network
+    labels:
+      - homepage.group=Home
+      - homepage.name=Pi Hole
+      - homepage.icon=pi-hole.png
+      - homepage.href=url
+      - homepage.description=Ad Blocker
+      - homepage.widget.type=pihole
+      - homepage.widget.url=http://pi.hole
+      - homepage.widget.version=5
+      - homepage.widget.key=api_key
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...

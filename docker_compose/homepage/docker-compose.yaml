@@ -1,0 +1,18 @@
+---
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    ports:
+      - 3000:3000
+    volumes:
+      - /srv/docker/homepage:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - swag_network
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...

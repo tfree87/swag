@@ -1,0 +1,73 @@
+---
+services:
+  web: &grampsweb
+    image: ghcr.io/gramps-project/grampsweb:latest
+    container_name: grampsweb
+    restart: unless-stopped
+    env_file:
+      - stack.env
+    depends_on:
+      - grampsweb_redis
+    volumes:
+      - /srv/docker/grampsweb/users:/app/users  # persist user database
+      - index:/app/indexdir  # persist search index
+      - thumb_cache:/app/thumbnail_cache  # persist thumbnails
+      - cache:/app/cache  # persist export and report caches
+      - secret:/app/secret  # persist flask secret
+      - /srv/docker/grampsweb/db:/root/.gramps/grampsdb  # persist Gramps database
+      - /srv/docker/grampsweb/media:/app/media  # persist media files
+      - tmp:/tmp
+    networks:
+      - swag_network
+    healthcheck:
+      test: "wget --no-verbose --tries=1 --spider http://localhost:5000"
+    labels:
+      - homepage.group=Media
+      - homepage.name=Gramps Web
+      - homepage.icon=gramps.png
+      - homepage.href=url
+      - homepage.description=Family Tree
+    
+  grampsweb_celery:
+    image: ghcr.io/gramps-project/grampsweb:latest
+    container_name: grampsweb_celery
+    restart: unless-stopped
+    env_file:
+      - stack.env
+    volumes:
+      - /srv/docker/grampsweb/users:/app/users  # persist user database
+      - index:/app/indexdir  # persist search index
+      - thumb_cache:/app/thumbnail_cache  # persist thumbnails
+      - cache:/app/cache  # persist export and report caches
+      - secret:/app/secret  # persist flask secret
+      - /srv/docker/grampsweb/db:/root/.gramps/grampsdb  # persist Gramps database
+      - /srv/docker/grampsweb/media:/app/media  # persist media files
+      - tmp:/tmp
+    networks:
+      - swag_network
+    depends_on:
+      - grampsweb_redis
+    command: celery -A gramps_webapi.celery worker --loglevel=INFO
+
+  grampsweb_redis:
+    image: redis:alpine
+    container_name: grampsweb_redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - swag_network
+
+volumes:
+  redis_data:
+  index:
+  thumb_cache:
+  cache:
+  secret:
+  tmp:
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...

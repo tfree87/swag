@@ -1,0 +1,79 @@
+---
+services:
+  web:
+    image: ghcr.io/mohamedbassem/hoarder-web:${HOARDER_VERSION:-release}
+    container_name: hoarder
+    restart: unless-stopped
+    volumes:
+      - /srv/docker/hoarder:/data
+    env_file:
+      - stack.env
+    networks:
+      - swag_network
+    healthcheck:
+      test: "wget --no-verbose --tries=1 --spider http://localhost:3000"
+    labels:
+      - homepage.group=Media
+      - homepage.name=Hoarder
+      - homepage.icon=hoarder.png
+      - homepage.href=url
+      - homepage.description=Bookmarks and Notes
+      
+  redis:
+    container_name: hoarder_redis
+    image: redis:7.2-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - swag_network
+      
+  chrome:
+    container_name: hoarder_chrome
+    image: gcr.io/zenika-hub/alpine-chrome:latest
+    restart: unless-stopped
+    command:
+      - --no-sandbox
+      - --disable-gpu
+      - --remote-debugging-address=0.0.0.0
+      - --remote-debugging-port=9222
+      - --hide-scrollbars
+    env_file:
+      - stack.env
+    networks:
+      - swag_network
+  
+  meilisearch:
+    container_name: hoarder_meili
+    image: getmeili/meilisearch:latest
+    restart: unless-stopped
+    env_file:
+      - stack.env
+    volumes:
+      - meilisearch:/meili_data
+    networks:
+      - swag_network
+  
+  workers:
+    container_name: hoarder_workers
+    image: ghcr.io/mohamedbassem/hoarder-workers:${HOARDER_VERSION:-release}
+    restart: unless-stopped
+    volumes:
+      - /srv/docker/hoarder:/data
+    env_file:
+      - stack.env
+    depends_on:
+      web:
+        condition: service_started
+    networks:
+      - swag_network
+
+volumes:
+  redis_data:
+  meilisearch:
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...

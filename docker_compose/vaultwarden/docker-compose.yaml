@@ -1,0 +1,26 @@
+---
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: always
+    ports:
+      - 8080:80
+    env_file:
+      - stack.env
+    volumes:
+      - "/srv/docker/vaultwarden:/data"
+    networks:
+      - swag_network
+    labels:
+      - homepage.group=Tools
+      - homepage.name=Vaultwarden
+      - homepage.icon=vaultwarden.png
+      - homepage.href=url
+      - homepage.description=Password Manager
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...

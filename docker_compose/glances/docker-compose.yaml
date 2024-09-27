@@ -1,0 +1,33 @@
+---
+services:
+  monitoring:
+    image: nicolargo/glances:latest-full
+    hostname: hostname
+    container_name: glances
+    restart: unless-stopped
+    pid: host
+    privileged: true
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "/run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock:ro"
+      - "/srv/docker/glances/glances.conf:/glances/conf/glances.conf"
+    env_file:
+      - stack.env
+    networks:
+      - swag_network
+    ports:
+      - 61208:61208
+    healthcheck:
+      test: "curl --fail http://localhost:61208"
+    labels:
+      - homepage.group=Server
+      - homepage.name=Glances
+      - homepage.icon=glances.png
+      - homepage.href=url
+      - homepage.description=Computer Resource Monitoring
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...

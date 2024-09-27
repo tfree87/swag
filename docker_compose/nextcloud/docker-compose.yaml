@@ -1,0 +1,78 @@
+---
+services:
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud
+    container_name: nextcloud
+    env_file:
+      - stack.env
+    volumes:
+      - /srv/docker/nextcloud/config:/config
+      - data:/data
+      - /mnt/external:/external
+    depends_on:
+      - mariadb
+    healthcheck:
+      test: curl --insecure --fail "https://localhost:443/login" || exit 1
+      interval: 2m
+      retries: 10
+      start_period: 10m
+      timeout: 5s
+    networks:
+      - swag_network
+    restart: unless-stopped
+    labels:
+      - homepage.group=Media
+      - homepage.name=Nextcloud
+      - homepage.icon=nextcloud.png
+      - homepage.href=url
+      - homepage.description=Personal Cloud
+  
+  mariadb:
+    image: lscr.io/linuxserver/mariadb
+    container_name: mariadb
+    env_file:
+      - stack.env
+    volumes:
+      - db_config:/config
+    networks:
+      - swag_network
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    container_name: nextcloud_redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - swag_network
+
+  imaginary:
+    image: nextcloud/aio-imaginary:latest
+    restart: unless-stopped
+    container_name: nextcloud_imaginary
+    environment:
+      PORT: 9000
+    networks:
+      - swag_network
+    cap_add:
+      - SYS_NICE
+    cap_drop:
+      - NET_RAW
+    read_only: true
+    tmpfs:
+      - /tmp
+
+volumes:
+  redis_data:
+    external: false
+  data:
+    external: false
+  db_config:
+    external: false
+    
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...

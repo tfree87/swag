@@ -1,0 +1,35 @@
+---
+services:
+  portainer:
+    image: portainer/portainer-ce:2.21.0
+    container_name: portainer
+    command: -H unix:///var/run/docker.sock
+    env_file:
+      - stack.env
+    ports:
+      - 9443:9443
+    volumes:
+      - data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    networks:
+      - swag_network
+    labels:
+      - homepage.group=Server
+      - homepage.name=Portainer
+      - homepage.icon=portainer.png
+      - homepage.href=url
+      - homepage.description=Docker Container Manager
+      - homepage.widget.type=portainer
+      - homepage.widget.url=https://portainer:9443
+      - homepage.widget.env=2
+      - homepage.widget.password=api_key
+    
+volumes:
+  data:
+
+networks:
+  swag_network:
+    name: swag_network
+    external: true
+...
